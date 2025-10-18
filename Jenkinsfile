@@ -1,4 +1,4 @@
-pipeline {
+﻿pipeline {
   agent any
 
   environment {
@@ -25,7 +25,6 @@ pipeline {
                 docker build -t ${DOCKER_IMAGE}:${APP_TAG} -t ${DOCKER_IMAGE}:latest .
               '''
             } else {
-              // Windows: use double quotes inside bat carefully
               bat """
                 @echo off
                 echo %DH_PASS% | docker login -u %DH_USER% --password-stdin
@@ -63,11 +62,9 @@ pipeline {
                   --set image.tag=${APP_TAG} --wait --timeout 120s
               '''
             } else {
-              // Windows PowerShell / CMD
-              // Use kubectl/helm in PATH; KUBECONFIG env var is set for the command
               bat """
                 set KUBECONFIG=%KCFG%
-                helm upgrade --install resume-app charts/resume-app --set image.repository=${DOCKER_IMAGE} --set image.tag=${APP_TAG} --wait --timeout 120s
+                "C:\\Users\\FusionGamingProPC\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Helm.Helm_Microsoft.Winget.Source_8wekyb3d8bbwe\\windows-amd64\\helm.exe" upgrade --install resume-app charts/resume-app --set image.repository=${DOCKER_IMAGE} --set image.tag=${APP_TAG} --wait --timeout 120s
               """
             }
           }
