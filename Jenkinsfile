@@ -73,17 +73,24 @@ pipeline {
     }
 
     stage('Smoke Test') {
-      steps {
-        script {
-          if (isUnix()) {
-            sh "kubectl get pods --no-headers || true"
-          } else {
-            bat "kubectl get pods --no-headers || echo 'kubectl get pods failed'"
-          }
+  steps {
+    script {
+      withCredentials([file(credentialsId: env.KUBECONFIG_CREDENTIAL, variable: 'KCFG')]) {
+        if (isUnix()) {
+          sh '''
+            export KUBECONFIG=$KCFG
+            kubectl get pods --no-headers || true
+          '''
+        } else {
+          bat """
+            set KUBECONFIG=%KCFG%
+            kubectl get pods --no-headers || echo 'kubectl get pods failed'
+          """
         }
       }
     }
   }
+}
 
   post {
     success { echo "✅ Pipeline finished successfully: ${DOCKER_IMAGE}:${APP_TAG}" }
