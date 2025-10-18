@@ -1,4 +1,4 @@
-﻿replicaCount: 2
+﻿replicaCount: 1
 image:
   repository: ganeshraj24/resume-app
   tag: "latest"
