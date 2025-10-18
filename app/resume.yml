@@ -1,0 +1,23 @@
+﻿name: "Ganeshbalaji R"
+title: "DevOps Engineer"
+contact:
+  Email: "ganeshbalajiraj@gmail.com"
+  Phone: "+91 9585287071"
+  LinkedIn: "https://www.linkedin.com/in/ganeshbalaji-raj1924"
+  Location: "Chennai, India"
+
+summary: >
+  DevOps Engineer with 3 years of experience at Tata Consultancy Services, specializing in designing and automating secure, scalable infrastructure for enterprise banking systems.
+  Proven expertise in Kubernetes, Vault, CI/CD pipelines, and multi-cloud environments (GCP, AWS).
+  Skilled in ensuring security, compliance, and operational excellence across cloud-native deployments.
+
+skills:
+  - Kubernetes (GKE, OpenShift)
+  - Docker & Helm
+  - Istio (Service Mesh, mTLS)
+  - Jenkins & UCD
+  - Terraform
+  - HashiCorp Vault (KV Store, JWT)
+  - GCP, AWS, Azure (basic networking)
+  - Dynatrace, Splunk
+  - Python, Bash, YAML
