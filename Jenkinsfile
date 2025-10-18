@@ -25,11 +25,13 @@ pipeline {
                 docker build -t ${DOCKER_IMAGE}:${APP_TAG} -t ${DOCKER_IMAGE}:latest .
               '''
             } else {
-              bat '''
+              bat """
                 @echo off
+                set DOCKER_IMAGE=${env.DOCKER_IMAGE}
+                set APP_TAG=${env.APP_TAG}
                 echo %DH_PASS% | docker login -u %DH_USER% --password-stdin
-                docker build -t ${DOCKER_IMAGE}:${APP_TAG} -t ${DOCKER_IMAGE}:latest .
-              '''
+                docker build -t %DOCKER_IMAGE%:%APP_TAG% -t %DOCKER_IMAGE%:latest .
+              """
             }
           }
         }
@@ -43,8 +45,12 @@ pipeline {
             sh "docker push ${DOCKER_IMAGE}:${APP_TAG}"
             sh "docker push ${DOCKER_IMAGE}:latest"
           } else {
-            bat "docker push ${DOCKER_IMAGE}:${APP_TAG}"
-            bat "docker push ${DOCKER_IMAGE}:latest"
+            bat """
+              set DOCKER_IMAGE=${env.DOCKER_IMAGE}
+              set APP_TAG=${env.APP_TAG}
+              docker push %DOCKER_IMAGE%:%APP_TAG%
+              docker push %DOCKER_IMAGE%:latest
+            """
           }
         }
       }
@@ -62,10 +68,10 @@ pipeline {
                   --set image.tag=${APP_TAG} --wait --timeout 120s
               '''
             } else {
-              bat '''
+              bat """
                 set KUBECONFIG=%KCFG%
                 "C:\\Users\\FusionGamingProPC\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Helm.Helm_Microsoft.Winget.Source_8wekyb3d8bbwe\\windows-amd64\\helm.exe" upgrade --install resume-app charts/resume-app --set image.repository=${DOCKER_IMAGE} --set image.tag=${APP_TAG} --wait --timeout 120s
-              '''
+              """
             }
           }
         }
@@ -75,10 +81,18 @@ pipeline {
     stage('Smoke Test') {
       steps {
         script {
-          if (isUnix()) {
-            sh "kubectl get pods --no-headers || true"
-          } else {
-            bat "kubectl get pods --no-headers || echo 'kubectl get pods failed'"
+          withCredentials([file(credentialsId: env.KUBECONFIG_CREDENTIAL, variable: 'KCFG')]) {
+            if (isUnix()) {
+              sh '''
+                export KUBECONFIG=$KCFG
+                kubectl get pods --no-headers || true
+              '''
+            } else {
+              bat """
+                set KUBECONFIG=%KCFG%
+                kubectl get pods --no-headers || echo 'kubectl get pods failed'
+              """
+            }
           }
         }
       }
